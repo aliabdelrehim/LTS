@@ -63,13 +63,10 @@ driver = 'HAM'
 fastest_driver_lap = session.laps.pick_driver(driver).pick_fastest()
 telemetry_driver = fastest_driver_lap.get_telemetry()
 
-# print(f"a7a7a {telemetry_driver}")
-
 
 v = telemetry_driver['Speed'] / 3.6    # Speed in m/s
 time_float = telemetry_driver['Time'] / np.timedelta64(1, 's')    # Time as a float variable instead of a date - telemetry driver has time as date
 
-print(telemetry_driver['Time'])
 
 # We calculate the longitudinal acceleration and filter it
 a_long = np.gradient(v)/np.gradient(time_float)
@@ -501,8 +498,3 @@ plt.show()
 # )
 
 # plt.show()
-
-"""
-next step: import slip angle from fastf1 lib"
-"""
-print(f"555555555555555555555 {len(distance)}")
