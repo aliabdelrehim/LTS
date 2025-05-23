@@ -187,6 +187,7 @@ line1, = ax.plot([], [], lw=1, label= 'Long Force [N]', color = 'red')  # Empty 
 line2, = ax.plot([], [], lw=1, label= 'Lat Force [N]', color = 'blue', ls = '--')
 ax.legend()
 
+####jkjljlhljjhlkhlkhlhlhjlhjhjlhdjlfhjlkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk
 # 3. PRE-COMPUTE FRAME DATA ==================================================
 # Pre-slice all possible frame data upfront
 x_frames = [distance[:k] for k in range(len(distance))]
