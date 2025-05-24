@@ -166,22 +166,25 @@ slip_angle = slip_angle_deg
 
 # 1. DATA OPTIMIZATION ========================================================
 # Downsample data (keep every 5th point)
-downsample = 2
+downsample = 1
 distance = distance[::downsample]  # Replace with your actual distance data (numpy array)
 Fx_total = Fx_total[::downsample]  # Replace with your slip angle data (numpy array)
 Fy_total = Fy_total[::downsample]
 
 
 # 2. BLITTING SETUP ==========================================================
-fig, ax = plt.subplots()
+fig, ax = plt.subplots(figsize=(12,6))
 
-
-ax.set(xlim=(distance.min(), distance.max()),  # Remove dynamic limits
-     ylim=(min(min(Fx_total), min(Fy_total)), max([max(Fx_total), max(Fy_total)])),
+# added dynamic limits
+ax.set(xlim=(distance.min()-0.05*distance.max(), distance.max()*1.1),  
+     ylim=(min(min(Fx_total), min(Fy_total))*1.1, max([max(Fx_total), max(Fy_total)])*1.1),
      xlabel='Distance [m]',
      ylabel='Force [deg]')
-line1, = ax.plot([], [], lw=1, label= 'Long Force [N]', color = 'red')  # Empty line object, to take [0] as ax.plot returns array of lines on axis of canvas, we have only one line so we choose 1 elemnt in this case
-line2, = ax.plot([], [], lw=1, label= 'Lat Force [N]', color = 'blue', ls = '--')
+line1, = ax.plot([], [], lw=2, label= 'Longtudinal Force [N]', color = 'red')  # Empty line object, to take [0] as ax.plot returns array of lines on axis of canvas, we have only one line so we choose 1 elemnt in this case
+line2, = ax.plot([], [], lw=2, label= 'Lateral Force [N]', color = 'blue', ls = '--')
+ax.set_xlabel('Distance [m]')
+ax.set_ylabel('Force [N]')
+ax.set_title(f'Hamilton 2020 Monza Qualifying Lap\n Estimated Lateral/Longitudinal Forces')
 ax.legend()
 
 # 3. PRE-COMPUTE FRAME DATA ==================================================
@@ -206,11 +209,16 @@ ani = animation.FuncAnimation(
     cache_frame_data=False
 )
 
-plt.show()
+ani.save(
+    'Forces_New.mp4',
+    writer='ffmpeg',          # Required for MP4
+    fps=30,                   # Frames per second
+    dpi=300,                  # Video resolution
+    bitrate=1800,             # Quality (higher = better)
+    progress_callback=lambda i, n: print(f"Saving frame {i}/{n}") 
+)
 
-
-
-
+plt.close()  # Free up memory after saving
 
 
 
@@ -322,77 +330,70 @@ plt.show()
 
 
 
-# Plotting
-plt.figure(figsize=(12, 6))
-plt.plot(telemetry_driver['Distance'], slip_angle_deg, label='Estimated Slip Angle')
-plt.xlabel('Distance (m)')
-plt.ylabel('Slip Angle (degrees)')
-plt.title(f'Hamilton 2020 Monza Qualifying - Estimated Slip Angle\nFastest Lap: {lap_time_str}')
-plt.legend()
-plt.grid()
-plt.show()
+# # Plotting
+# plt.figure(figsize=(12, 6))
+# plt.plot(telemetry_driver['Distance'], slip_angle_deg, label='Estimated Slip Angle')
+# plt.xlabel('Distance (m)')
+# plt.ylabel('Slip Angle (degrees)')
+# plt.title(f'Hamilton 2020 Monza Qualifying - Estimated Slip Angle\nFastest Lap: {lap_time_str}')
+# plt.legend()
+# plt.grid()
+# plt.show()
 
 
-plt.figure(figsize=(12, 6))
-plt.plot(telemetry_driver['Distance'], Fx_total, 'r-', label='Longtidunal Force')
-plt.plot(telemetry_driver['Distance'], Fy_total, 'b--', label='Lateral Force')
+# plt.figure(figsize=(12, 6))
+# plt.plot(telemetry_driver['Distance'], Fx_total, 'r-', label='Longtidunal Force')
+# plt.plot(telemetry_driver['Distance'], Fy_total, 'b--', label='Lateral Force')
 
-plt.xlabel('Distance [m]')
-plt.ylabel('Force [N]')
-plt.title(f'Hamilton 2020 Monza Qualifying Lap\n Estimated Lateral/Longitudinal Forces')
+# plt.xlabel('Distance [m]')
+# plt.ylabel('Force [N]')
+# plt.title(f'Hamilton 2020 Monza Qualifying Lap\n Estimated Lateral/Longitudinal Forces')
 
 
-plt.legend()
-plt.grid()
-plt.show()
+# plt.legend()
+# plt.grid()
+# plt.show()
 
 
 # print(f"55555555 {len(telemetry_driver['Distance'])}")
 # print(f"555zeby55555 {len(Fx_total)}")
 # print(type(telemetry_driver['Distance']))
 
-downsample = 2  # Keep every 5th point (adjust based on your data length)
-xdata = telemetry_driver['Distance'].values[::downsample]
-Fx_total = Fx_total[::downsample]  # Your longitudinal force array
-Fy_total = Fy_total[::downsample]  # Your lateral force array
+# downsample = 2  # Keep every 5th point (adjust based on your data length)
+# xdata = telemetry_driver['Distance'].values[::downsample]
+# Fx_total = Fx_total[::downsample]  # Your longitudinal force array
+# Fy_total = Fy_total[::downsample]  # Your lateral force array
 
-Fx_total = np.asarray(Fx_total)
-Fy_total = np.asarray(Fy_total)
-fig, axis = plt.subplots()
-line1 = axis.plot(xdata[0], Fx_total[0], color='red', label='Longtidunal Force')[0]
-line2 = axis.plot(xdata[0], Fy_total[0], 'b--', label='Lateral Force')[0]
+# Fx_total = np.asarray(Fx_total)
+# Fy_total = np.asarray(Fy_total)
+# fig, axis = plt.subplots(figsize=(12, 6))
+# line1 = axis.plot(xdata[0], Fx_total[0], color='red', label='Longtidunal Force')[0]
+# line2 = axis.plot(xdata[0], Fy_total[0], 'b--', label='Lateral Force')[0]
 
-axis.set_xlim(xdata.min(), xdata.max())
-axis.set_ylim(min(Fx_total.min(), Fy_total.min()), 
-              max(Fx_total.max(), Fy_total.max()))
+# axis.set_xlim(xdata.min(), xdata.max())
+# axis.set_ylim(min(Fx_total.min(), Fy_total.min()), 
+#               max(Fx_total.max(), Fy_total.max()))
 
-axis.set_xlabel('Distance [m]')
-axis.set_ylabel('Force [N]')
-axis.set_title(f'Hamilton 2020 Monza Qualifying Lap\n Estimated Lateral/Longitudinal Forces')
+# axis.set_xlabel('Distance [m]')
+# axis.set_ylabel('Force [N]')
+# axis.set_title(f'Hamilton 2020 Monza Qualifying Lap\n Estimated Lateral/Longitudinal Forces')
 
-axis.legend()
-axis.grid()
+# axis.legend()
+# axis.grid()
 
 
 
-def update(frame):
-    # for each frame, update the data stored on each artist.
-    # for each frame, update the data stored on each artist.
-    # x = xdata[:frame]
-    # y = Fx_total[:frame]
-    # update the scatter plot:
-    # data = np.stack([x, y]).T
-    # line1.set_offsets(data)
-    # update the line plot:
-    line1.set_xdata(xdata[:frame])
-    line1.set_ydata(Fx_total[:frame])
-    line2.set_xdata(xdata[:frame])
-    line2.set_ydata(Fy_total[:frame])
-    return (line1, line2)
+# def update(frame):
+   
+#     line1.set_xdata(xdata[:frame])
+#     line1.set_ydata(Fx_total[:frame])
+#     line2.set_xdata(xdata[:frame])
+#     line2.set_ydata(Fy_total[:frame])
+#     return (line1, line2)
 
-ani = animation.FuncAnimation(fig=fig, func=update, frames=len(xdata)+1, interval=30, blit=True)
-# ani.save("slip_angle.mp4")
-plt.show()
+# ani = animation.FuncAnimation(fig=fig, func=update, frames=len(xdata)+1, interval=30, blit=True)
+# # ani.save("slip_angle.mp4")
+# plt.show()
 
 # # Convert to numpy arrays and downsample for better performance
 # downsample_factor = 10  # Keep every 10th point (adjust based on your data density)
