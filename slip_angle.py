@@ -94,6 +94,10 @@ v_mag = np.sqrt(vx**2 + vy**2)  # Ground speed magnitude
 ax = np.gradient(vx) / dt
 ay = np.gradient(vy) / dt
 
+# We calculate the longitudinal acceleration and filter it
+ax = np.gradient(v)/np.gradient(time_float)
+ax_smooth = np.convolve(ax, np.ones((3,))/3, mode = 'same')
+
 # Calculate lateral acceleration (component perpendicular to velocity direction)
 a_lat = (vx * ay - vy * ax) / v_mag
 
@@ -166,64 +170,72 @@ slip_angle = slip_angle_deg
 
 # 1. DATA OPTIMIZATION ========================================================
 # Downsample data (keep every 5th point)
-downsample = 1
-distance = distance[::downsample]  # Replace with your actual distance data (numpy array)
-Fx_total = Fx_total[::downsample]  # Replace with your slip angle data (numpy array)
-Fy_total = Fy_total[::downsample]
+# downsample = 1
+# distance = distance[::downsample]  # Replace with your actual distance data (numpy array)
+# Fx_total = Fx_total[::downsample]  # Replace with your slip angle data (numpy array)
+# Fy_total = Fy_total[::downsample]
 
 
-# 2. BLITTING SETUP ==========================================================
-fig, ax = plt.subplots(figsize=(12,6))
+# # 2. BLITTING SETUP ==========================================================
+# fig, ax = plt.subplots(figsize=(12,6))
 
-# added dynamic limits
-ax.set(xlim=(distance.min()-0.05*distance.max(), distance.max()*1.1),  
-     ylim=(min(min(Fx_total), min(Fy_total))*1.1, max([max(Fx_total), max(Fy_total)])*1.1),
-     xlabel='Distance [m]',
-     ylabel='Force [deg]')
-line1, = ax.plot([], [], lw=2, label= 'Longtudinal Force [N]', color = 'red')  # Empty line object, to take [0] as ax.plot returns array of lines on axis of canvas, we have only one line so we choose 1 elemnt in this case
-line2, = ax.plot([], [], lw=2, label= 'Lateral Force [N]', color = 'blue', ls = '--')
-ax.set_xlabel('Distance [m]')
-ax.set_ylabel('Force [N]')
-ax.set_title(f'Hamilton 2020 Monza Qualifying Lap\n Estimated Lateral/Longitudinal Forces')
-ax.legend()
+# # added dynamic limits
+# ax.set(xlim=(distance.min()-0.05*distance.max(), distance.max()*1.1),  
+#      ylim=(min(min(Fx_total), min(Fy_total))*1.1, max([max(Fx_total), max(Fy_total)])*1.1),
+#      xlabel='Distance [m]',
+#      ylabel='Force [deg]')
+# line1, = ax.plot([], [], lw=2, label= 'Longtudinal Force [N]', color = 'red')  # Empty line object, to take [0] as ax.plot returns array of lines on axis of canvas, we have only one line so we choose 1 elemnt in this case
+# line2, = ax.plot([], [], lw=2, label= 'Lateral Force [N]', color = 'blue', ls = '--')
+# ax.set_xlabel('Distance [m]')
+# ax.set_ylabel('Force [N]')
+# ax.set_title(f'Hamilton 2020 Monza Qualifying Lap\n Estimated Lateral/Longitudinal Forces')
+# ax.legend()
 
-# 3. PRE-COMPUTE FRAME DATA ==================================================
-# Pre-slice all possible frame data upfront
-x_frames = [distance[:k] for k in range(len(distance))]
-y_frames1 = [Fx_total[:k] for k in range(len(distance))]
-y_frames2 = [Fy_total[:k] for k in range(len(distance))]
+# # 3. PRE-COMPUTE FRAME DATA ==================================================
+# # Pre-slice all possible frame data upfront
+# x_frames = [distance[:k] for k in range(len(distance))]
+# y_frames1 = [Fx_total[:k] for k in range(len(distance))]
+# y_frames2 = [Fy_total[:k] for k in range(len(distance))]
 
-# 4. OPTIMIZED UPDATE FUNCTION ===============================================
-def update(frame):
-    line1.set_data(x_frames[frame], y_frames1[frame])
-    line2.set_data(x_frames[frame], y_frames2[frame])
-    return line1, line2
+# # 4. OPTIMIZED UPDATE FUNCTION ===============================================
+# def update(frame):
+#     line1.set_data(x_frames[frame], y_frames1[frame])
+#     line2.set_data(x_frames[frame], y_frames2[frame])
+#     return line1, line2
 
-# 5. HIGH-PERFORMANCE RENDERING ==============================================
-ani = animation.FuncAnimation(
-    fig=fig,
-    func=update,
-    frames=len(distance),
-    interval=10,  # 10ms = 100 FPS cap (system-dependent)
-    blit=True,     # Critical for speed
-    cache_frame_data=False
-)
+# # 5. HIGH-PERFORMANCE RENDERING ==============================================
+# ani = animation.FuncAnimation(
+#     fig=fig,
+#     func=update,
+#     frames=len(distance),
+#     interval=10,  # 10ms = 100 FPS cap (system-dependent)
+#     blit=True,     # Critical for speed
+#     cache_frame_data=False
+# )
 
-ani.save(
-    'Forces_New.mp4',
-    writer='ffmpeg',          # Required for MP4
-    fps=30,                   # Frames per second
-    dpi=300,                  # Video resolution
-    bitrate=1800,             # Quality (higher = better)
-    progress_callback=lambda i, n: print(f"Saving frame {i}/{n}") 
-)
+# ani.save(
+#     'Forces_New.mp4',
+#     writer='ffmpeg',          # Required for MP4
+#     fps=30,                   # Frames per second
+#     dpi=300,                  # Video resolution
+#     bitrate=1800,             # Quality (higher = better)
+#     progress_callback=lambda i, n: print(f"Saving frame {i}/{n}") 
+# )
 
-plt.close()  # Free up memory after saving
-
-
+# plt.close()  # Free up memory after saving
 
 
 
+
+fig, axes = plt.subplots(2, 1, figsize=(12, 12))
+axes[0].plot(telemetry_driver['Distance'], telemetry_driver['Speed'], linewidth = 2)
+axes[0].set(xlabel = "Distance (m)", ylabel = "Speed (km/h)")
+
+axes[1].plot(telemetry_driver['Distance'], ax, linewidth = 1, label = 'Raw')
+axes[1].set(xlabel = "Distance (m)", ylabel = "Longitudinal Acceleration (m/s^2)")
+axes[1].legend()
+
+plt.show()
 
 
 
