@@ -1,5 +1,4 @@
 import math
-import pandas as pd
 
 import fastf1 as ff1
 from fastf1 import plotting
@@ -296,3 +295,7 @@ plt.show()
 # ani = animation.FuncAnimation(fig=fig, func=update, frames=len(xdata)+1, interval=30, blit=True)
 # # ani.save("slip_angle.mp4")
 # plt.show()
+
+
+
+

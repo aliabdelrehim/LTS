@@ -20,6 +20,7 @@ session.load()
 circuit_info = session.get_circuit_info()  # Now works in v3+
 lap = session.laps.pick_fastest()
 pos = lap.get_pos_data()
+print(pos)
 
 ##############################################################################
 # Rotation function for correct track orientation
