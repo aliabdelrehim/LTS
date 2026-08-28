@@ -18,4 +18,4 @@ This project retrieves Formula 1 telemetry data and visualises the fastest quali
 Install the required packages using:
 
 ```bash
-pip install fastf1 numpy matplotlib
+pip install -r requirements.txt
