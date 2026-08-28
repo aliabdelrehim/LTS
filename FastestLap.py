@@ -84,7 +84,7 @@ ax_track.set_xticks([])
 ax_track.set_yticks([])
 ax_track.axis('equal')
 
-## save animation into mp4 and gif video and plot
+## save animation into gif video and plot
 animation.save("Verstappen_Fastest_Lap_2025.gif")
 plt.tight_layout()
 plt.show()
