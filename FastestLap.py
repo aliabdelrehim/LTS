@@ -51,7 +51,7 @@ ax_track.plot(rotated_track[:, 0], rotated_track[:, 1], color ='black')
 #animated variables
 time_text = ax_track.text(0.05, 0.95, '', transform=ax_track.transAxes, fontsize=10,
                          bbox=dict(facecolor='white', alpha=0.8))
-car_point, = ax_track.plot([], [], 'ro', color = 'blue', markersize=10)
+car_point, = ax_track.plot([], [], 'ro', color='blue', markersize=10)
 
 def update(frame):
 
