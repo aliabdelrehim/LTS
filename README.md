@@ -15,11 +15,32 @@ This project retrieves Formula 1 telemetry data and visualises the fastest quali
 - NumPy
 - Matplotlib
 
+## How to Run
+
+Clone the repository:
+
+```bash
+git clone https://github.com/aliabdelrehim/LTS.git
+```
+
+Navigate to the project directory:
+
+```bash
+cd LTS
+```
+
 Install the required packages using:
 
 ```bash
 pip install -r requirements.txt
 ```
+
+Run the fastest lap analysis:
+
+```bash
+python FastestLap.py
+```
+
 ## Performance Note
 
 Generating the GIF animation can take some time.
