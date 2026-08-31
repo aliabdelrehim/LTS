@@ -27,4 +27,5 @@ Generating the GIF animation can take some time.
 If you only want to run the telemetry analysis and visualisation without saving the animation, comment out the following line in `FastestLap.py`:
 
 ```python
-animation.save("Verstappen_Fastest_Lap_2025.gif")```
+animation.save("Verstappen_Fastest_Lap_2025.gif")
+```
